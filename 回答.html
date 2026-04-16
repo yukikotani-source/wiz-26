@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wiz クイズ回答フォーム</title>
+    <style>
+        :root { --main-green: #2ecc71; --dark-green: #27ae60; --bg-white: #f9fbf9; }
+        body { font-family: "Helvetica Neue", Arial, sans-serif; background-color: var(--bg-white); margin: 0; padding: 20px; text-align: center; color: #333; }
+        h2 { color: var(--dark-green); margin-bottom: 20px; font-size: 1.2em; border-bottom: 2px solid var(--main-green); padding-bottom: 10px; }
+        
+        .grid-teams { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 30px; }
+        /* 💡 練習問題を入れて9個になるため、3列×3行で綺麗に並ぶように変更しました */
+        .grid-q { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 30px; }
+        
+        .btn-team, .btn-q { background: white; border: 2px solid #ddd; padding: 15px 2px; border-radius: 8px; font-weight: bold; font-size: 0.85em; color: #555; cursor: pointer; }
+        .btn-team.active, .btn-q.active { background: var(--main-green); color: white; border-color: var(--main-green); }
+
+        .grid-ans { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+        .btn-ans { background: white; border: 2px solid #ddd; padding: 20px; border-radius: 12px; font-weight: bold; font-size: 1.5em; color: #333; cursor: pointer; }
+        .btn-ans.active { background: var(--dark-green); color: white; border-color: var(--dark-green); transform: scale(1.05); }
+
+        .btn-submit { background: #333; color: white; border: none; padding: 18px; width: 100%; border-radius: 50px; font-size: 1.2em; font-weight: bold; margin-bottom: 20px; cursor: pointer; }
+        .btn-submit:active { background: #000; }
+        
+        .instruction { font-size: 0.85em; color: #777; margin-bottom: 10px; text-align: left; font-weight: bold; border-left: 4px solid var(--main-green); padding-left: 8px;}
+    </style>
+</head>
+<body>
+
+    <h2>Wiz 25卒 クイズ回答</h2>
+
+    <div class="instruction">1. あなたのチームを選択</div>
+    <div class="grid-teams">
+        <div class="btn-team" onclick="selectTeam('東京A', this)">東京A</div>
+        <div class="btn-team" onclick="selectTeam('東京B', this)">東京B</div>
+        <div class="btn-team" onclick="selectTeam('東京C', this)">東京C</div>
+        <div class="btn-team" onclick="selectTeam('東京D', this)">東京D</div>
+        <div class="btn-team" onclick="selectTeam('福岡', this)">福岡</div>
+        <div class="btn-team" onclick="selectTeam('大阪A', this)">大阪A</div>
+        <div class="btn-team" onclick="selectTeam('大阪B', this)">大阪B</div>
+        <div class="btn-team" onclick="selectTeam('鹿児島', this)">鹿児島</div>
+    </div>
+
+    <div class="instruction">2. 何問目かを選択</div>
+    <div class="grid-q">
+        <div class="btn-q" onclick="selectQ('0', this)">練習</div>
+        <div class="btn-q" onclick="selectQ('1', this)">Q1</div>
+        <div class="btn-q" onclick="selectQ('2', this)">Q2</div>
+        <div class="btn-q" onclick="selectQ('3', this)">Q3</div>
+        <div class="btn-q" onclick="selectQ('4', this)">Q4</div>
+        <div class="btn-q" onclick="selectQ('5', this)">Q5</div>
+        <div class="btn-q" onclick="selectQ('6', this)">Q6</div>
+        <div class="btn-q" onclick="selectQ('7', this)">Q7</div>
+        <div class="btn-q" onclick="selectQ('8', this)">Q8</div>
+    </div>
+
+    <div class="instruction">3. 答えを選択</div>
+    <div class="grid-ans">
+        <div class="btn-ans" onclick="selectAns('①', this)">①</div>
+        <div class="btn-ans" onclick="selectAns('②', this)">②</div>
+        <div class="btn-ans" onclick="selectAns('③', this)">③</div>
+        <div class="btn-ans" onclick="selectAns('④', this)">④</div>
+    </div>
+
+    <button class="btn-submit" onclick="submitAnswer()">回答を送信する</button>
+
+<script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyJu4pvTwJUgqzijS8SD0FVtdwR921ltzzZ7f1cmYBz-Cqx3dV5UXwAsuA672yxglQ2iQ/exec"; 
+
+    let currentTeam = "";
+    let currentQ = "";
+    let currentAns = "";
+
+    function selectTeam(team, element) {
+        currentTeam = team;
+        document.querySelectorAll('.btn-team').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+    }
+
+    function selectQ(q, element) {
+        currentQ = q;
+        document.querySelectorAll('.btn-q').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+    }
+
+    function selectAns(ans, element) {
+        currentAns = ans;
+        document.querySelectorAll('.btn-ans').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+    }
+
+    function submitAnswer() {
+        if (!GAS_URL || GAS_URL.includes("ここにウェブアプリのURL")) { alert("GASのURLが設定されていません。"); return; }
+        if (!currentTeam) { alert("チームを選択してください！"); return; }
+        if (currentQ === "") { alert("問題番号（練習 または Q1〜Q8）を選択してください！"); return; }
+        if (!currentAns) { alert("答えを選択してください！"); return; }
+
+        const btn = document.querySelector('.btn-submit');
+        const originalText = btn.innerText;
+        btn.innerText = "送信中...";
+        btn.style.background = "#999";
+
+        // 「練習」が選ばれた場合は「Q0」として送信される
+        const formattedAnswer = `Q${currentQ}: ${currentAns}`;
+        const url = `${GAS_URL}?team=${encodeURIComponent(currentTeam)}&ans=${encodeURIComponent(formattedAnswer)}`;
+        
+        fetch(url, { mode: 'no-cors' }).then(() => {
+            // アラートの文章を「練習問題」か「本番（Q1〜）」かで出し分ける
+            const qText = currentQ === '0' ? "【練習問題】" : `【Q${currentQ}】`;
+            alert(`【${currentTeam}】の${qText}の回答「${currentAns}」を送信しました！`);
+            
+            currentAns = "";
+            document.querySelectorAll('.btn-ans').forEach(el => el.classList.remove('active'));
+            btn.innerText = originalText;
+            btn.style.background = "#333";
+        }).catch(() => {
+            alert("通信エラーが発生しました。ネット接続を確認してもう一度押してください。");
+            btn.innerText = originalText;
+            btn.style.background = "#333";
+        });
+    }
+</script>
+</body>
+</html>

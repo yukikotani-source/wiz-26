@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大きな挨拶</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* フォントの滑らかさを向上させるためのカスタム設定 */
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen m-0 p-4">
+    <div class="text-center">
+        <!-- 
+             text-6xl: モバイルでのサイズ
+             md:text-8xl: タブレット以上でのサイズ
+             lg:text-9xl: デスクトップでのサイズ
+        -->
+        <h1 class="font-bold text-gray-800 text-6xl md:text-8xl lg:text-9xl tracking-tighter transition-all duration-500 hover:scale-105 cursor-default select-none">
+            こんにちは
+        </h1>
+        <p class="mt-8 text-gray-400 text-sm md:text-base">
+            Responsive HTML Display
+        </p>
+    </div>
+</body>
+</html>
